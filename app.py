@@ -109,7 +109,7 @@ def get_start_date(start):
 
 
 @app.route('/api/v1.0/<start>/<end>')
-def get_dates(start='1900-01-01',end='9999-12-31'):
+def get_dates(start,end):
     session = Session(engine)
 
     query1 = session.query(Measurement.date,func.min(Measurement.tobs)).filter(Measurement.date.between(start,end)).all()
