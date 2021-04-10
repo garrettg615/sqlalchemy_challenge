@@ -28,14 +28,15 @@ app = Flask(__name__)
 @app.route("/")
 def homepage():
     print('Server request received for Homepage...')
-    return("Welcome to the Definitive API for the weather in Hawaii!!<br/>"
-        "Below are the available roots you can visit:<br/>"
-        "/api/v1.0/precipitation<br/>"
-        "/api/v1.0/stations<br/>"
-        "/api/v1.0/tobs<br/>"
-        "/api/v1.0/2017-08-07<br/>"
-        "/api/v1.0/2017-08-07/2017-08-17<br/>"
+    return("Welcome to the Definitive API for the weather in Hawaii!!<br/><br/>"
+        "Below are the available roots you can visit:<br/><br/>"
+        "Use this path to get percipitation data:<br/>  /api/v1.0/precipitation<br/><br/>"
+        "use this path for a list of station collecting weather data:<br/>  /api/v1.0/stations<br/><br/>"
+        "Use this path to get all Temperatures collected:<br/>  /api/v1.0/tobs<br/><br/>"
+        "Use this path get the Min, Average and Max temperature for specific date to the end of the data set:<br/>  /api/v1.0/2017-08-07<br/><br/>"
+        "Use this path to get Min, Average and Max temperature between 2 dates:<br/>  /api/v1.0/2017-08-07/2017-08-17<br/>"
     )
+
 
 @app.route("/api/v1.0/precipitation")
 def percip_page():
@@ -49,6 +50,7 @@ def percip_page():
     percip = dict(results)
     return jsonify(percip)
 
+
 @app.route("/api/v1.0/stations")
 def station_page():
     print('Server request received for percipitation')
@@ -61,6 +63,7 @@ def station_page():
     station_dict = dict(results)
 
     return jsonify(station_dict)
+
 
 @app.route("/api/v1.0/tobs")
 def temp_obs_page():
@@ -85,10 +88,8 @@ def temp_obs_page():
 
     temp_obs = dict(tobs_active)
 
-    if most_active is True:
-        return f'THE MOST ACTIVE WEATHER STATION IS {stat_name[0][1]}<br/>STATION ID: {stat_name[0][0]}<br/><br/>'
-    
     return jsonify(temp_obs)
+
 
 @app.route('/api/v1.0/<start>')
 def get_start_date(start):
@@ -106,8 +107,9 @@ def get_start_date(start):
 
     return jsonify(temp_min,temp_avg,temp_max)
 
+
 @app.route('/api/v1.0/<start>/<end>')
-def get_dates(start,end):
+def get_dates(start='1900-01-01',end='9999-12-31'):
     session = Session(engine)
 
     query1 = session.query(Measurement.date,func.min(Measurement.tobs)).filter(Measurement.date.between(start,end)).all()
@@ -121,7 +123,6 @@ def get_dates(start,end):
     temp_max = dict(query3)
 
     return jsonify(temp_min,temp_avg,temp_max)
-
 
 
 if __name__ == "__main__":
